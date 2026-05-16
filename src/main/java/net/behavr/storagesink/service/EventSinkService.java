@@ -132,7 +132,7 @@ public class EventSinkService {
 			if (ndjsonSize(buf.viewLines(), n) > maxBytes) {
 				n = Math.min(n, buf.linesCountForByteLimit(maxBytes));
 			}
-			n = Math.max(1, Math.min(n, buf.lineCount()));
+			n = Math.clamp(n, 1, buf.lineCount());
 			flushBufferChunk(buf, n, now);
 		}
 	}
@@ -220,7 +220,7 @@ public class EventSinkService {
 		return e.occurredAt() != null || e.receivedAt() != null;
 	}
 
-	private final class LineBuffer {
+	private static final class LineBuffer {
 
 		private final PartitionKey partitionKey;
 		private final List<String> lines = new ArrayList<>();

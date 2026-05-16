@@ -60,7 +60,7 @@ class EventSinkServiceTest {
 	}
 
 	@Test
-	void skipsMalformedAndWritesValidNdjson() throws Exception {
+	void skipsMalformedAndWritesValidNdjson() {
 		String valid =
 				"{\"eventId\":\"e1\",\"eventType\":\"search\",\"siteId\":\"s1\",\"occurredAt\":\"2026-05-11T20:01:00Z\",\"receivedAt\":\"2026-05-11T20:01:01Z\"}";
 		var records = new ArrayList<ConsumerRecord<String, String>>();
