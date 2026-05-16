@@ -1,0 +1,38 @@
+# MinIO only — Kafka comes from behavr-api (same host: localhost:9092).
+# MinIO is published on host 9010 (S3 API) and 9011 (console). JetBrains / Xdebug often uses 9000–9003.
+#
+# Typical local flow:
+#   1. Start behavr-api Docker Compose (Kafka + Kafka UI on 9092 / 8081).
+#   2. Start this file: docker compose up -d
+#   3. Run behavr-storage-sink with profile `local` (Spring Docker Compose will attach here).
+#
+# If behavr-api is not running and you need a local broker, use the optional overlay:
+#   docker compose -f compose.yaml -f compose.kafka-standalone.yaml up -d
+#   (Do not use that overlay while behavr-api Kafka is already bound to 9092.)
+services:
+  minio:
+    image: docker.io/minio/minio:latest
+    ports:
+      # Avoid 9000–9003 (common PhpStorm / Xdebug range on Windows)
+      - "9010:9000"
+      - "9011:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  minio-init:
+    image: docker.io/minio/mc:latest
+    depends_on:
+      - minio
+    restart: on-failure
+    entrypoint: >
+      /bin/sh -c "
+      until mc alias set local http://minio:9000 minioadmin minioadmin; do sleep 1; done &&
+      mc mb local/behavr-lake --ignore-existing
+      "
+
+volumes:
+  minio_data:

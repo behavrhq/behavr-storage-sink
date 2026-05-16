@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: behavr-storage-sink
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: behavr-storage-sink
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      properties:
+        max.poll.records: 1000
+
+behavr:
+  kafka:
+    topic: behavr.events.raw
+  sink:
+    bucket: behavr-lake
+    prefix: raw/events
+    max-events-per-file: 1000
+    flush-interval: 10s
+    max-buffer-bytes: 5242880
+  storage:
+    region: us-east-1
+    endpoint: ""
+    path-style-access: true
+    access-key: ""
+    secret-key: ""
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+
+---
+spring:
+  config.activate.on-profile: local
+
+behavr:
+  storage:
+    endpoint: http://localhost:9010
+    path-style-access: true
+    access-key: minioadmin
+    secret-key: minioadmin
+
+---
+spring:
+  config.activate.on-profile: prod
+  config:
+    import: optional:file:.env[.properties]
+  kafka:
+    bootstrap-servers: ${CONFLUENT_BOOTSTRAP_SERVERS}
+    properties:
+      security.protocol: SASL_SSL
+      sasl.mechanism: PLAIN
+      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${CONFLUENT_API_KEY}" password="${CONFLUENT_API_SECRET}";
+
+behavr:
+  sink:
+    bucket: ${BEHAVR_SINK_BUCKET:behavr-lake}
+    prefix: ${BEHAVR_SINK_PREFIX:raw/events}
+  storage:
+    region: ${AWS_REGION:us-east-1}
+    endpoint: ""
+    path-style-access: false
+    access-key: ${AWS_ACCESS_KEY_ID:}
+    secret-key: ${AWS_SECRET_ACCESS_KEY:}

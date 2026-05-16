@@ -1,0 +1,15 @@
+spring:
+  kafka:
+    listener:
+      auto-startup: false
+
+behavr:
+  storage:
+    endpoint: http://127.0.0.1:59993
+    access-key: test
+    secret-key: test
+
+management:
+  endpoint:
+    health:
+      show-details: always
