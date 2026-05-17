@@ -1,6 +1,6 @@
 # Downstream service: consuming Behavr Collector Kafka topics
 
-This document is for **another Spring Boot application** that consumes messages produced by the **Behavr Collector API** (`behavr-api`). It describes the **contract** on the wire and a **recommended Spring Kafka** setup. It is not a dependency of this repo; copy or adapt the snippets into your consumer project.
+This document is for **Behavr Storage Sink** that consumes messages produced by the **Behavr Collector API** (`behavr-api`). It describes the **contract** on the wire and a **recommended Spring Kafka** setup. It is not a dependency of this repo; copy or adapt the snippets into your consumer project.
 
 ## Topic and message contract
 

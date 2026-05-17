@@ -1,7 +1,7 @@
 # Behavr Storage Sink
-## AI Agent Development Specification
+## Technical Development Specification
 
-This document is a development specification for an AI coding agent building the **Behavr Storage Sink** service.
+This document is a development specification of the **Behavr Storage Sink** service.
 
 The service consumes validated behavioral events from Kafka and writes them as newline-delimited JSON files (`.jsonl`) to object storage.
 
